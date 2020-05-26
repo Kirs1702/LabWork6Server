@@ -14,31 +14,19 @@ public class RemoveAllByDistanceCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
+    public String  execute(String... args) {
+
         if(routeSet.size() == 0){
-            System.out.println("Коллекция пуста.");
+            return "Коллекция пуста.";
         }
         else {
-            boolean success = false;
-            ArrayList<Route> toDelete = new ArrayList<>();
-            for (Route route : routeSet) {
-                if (route.getDistance() == Integer.parseInt(args[0])) {
-                    toDelete.add(route);
-                    success = true;
-                }
-            }
-            for (Route route : toDelete) {
-                routeSet.remove(route);
-                System.out.println("Удалён маршрут с именем \"" + route.getName() + "\"");
-            }
-            if (!success) {
-                System.out.println("Ни один маршрут не был удалён.");
-            }
+            routeSet.removeIf((route) -> route.getDistance() == Integer.parseInt(args[0]));
         }
+        return "Были удалены элементы коллекции.";
     }
 
     @Override
     public String getDescription() {
-        return "Удалить из коллекции все элементы, дистанция которых равна заданной.";
+        return "Удалить элементы, дистанция которых равна заданной.";
     }
 }

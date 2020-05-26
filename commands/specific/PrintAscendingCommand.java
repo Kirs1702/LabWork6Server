@@ -13,12 +13,13 @@ public class PrintAscendingCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
+    public String execute(String... args) {
 
+        String result = "";
 
         if (routeSet.isEmpty()) {
-            System.out.println("Коллекция пуста.");
-            return;
+            return "Коллекция пуста.";
+
         }
 
         Route routeMin = new Route();
@@ -43,14 +44,10 @@ public class PrintAscendingCommand extends Command {
         }
 
 
-
-
-
-
-
         for(Route route : toPrint){
-            System.out.println(route.toString());
+            result = result.concat(route.toString()).concat("\n");
         }
+        return result;
     }
 
     @Override

@@ -10,9 +10,9 @@ public class ClearCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
+    public String  execute(String... args) {
         routeSet.clear();
-        System.out.println("Коллекция очищена.");
+        return  "Коллекция очищена.";
     }
 
     @Override

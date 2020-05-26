@@ -18,13 +18,12 @@ public class ExecuteScriptCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) throws IOException, XMLStreamException {
+    public String  execute(String... args) throws IOException, XMLStreamException {
         Scanner fileScan;
         try {
             fileScan = new Scanner(new InputStreamReader(new FileInputStream(new File(args[0]))));
         } catch (FileNotFoundException e) {
-            System.out.println("Скрипт " + args[0] + " не существует или недоступен к чтению. Скрипт не выполнен.");
-            return;
+            return "Скрипт " + args[0] + " не существует или недоступен к чтению. Скрипт не выполнен.";
         }
 
 
@@ -57,12 +56,11 @@ public class ExecuteScriptCommand extends Command {
 
 
 
-
         }
-            //Замена сканнеров у консолРидера
-            consoleReader.setScanner(prevScanner);
-            //
 
+        consoleReader.setScanner(prevScanner);
+
+        return "Конец выполнения скриптов.";
 
 
     }
@@ -73,6 +71,6 @@ public class ExecuteScriptCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "Считать и исполнить скрипт из указанного файла.";
+        return "Считать и исполнить скрипт из файла.";
     }
 }

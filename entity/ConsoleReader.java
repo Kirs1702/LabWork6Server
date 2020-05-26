@@ -5,6 +5,7 @@ import main.commands.CommandList;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -63,24 +64,25 @@ public class ConsoleReader {
      * @throws IOException исключение ввода-вывода
      * @throws XMLStreamException исключение для неожиданных ошибок обработки
      */
-    public void executeCommand(String line) throws IOException, XMLStreamException {
+    public String executeCommand(String line) throws IOException, XMLStreamException {
+        String result = "";
         boolean success = false;
         String[] args = prepareArgs(line);
         String command = prepareCommand(line);
 
 
         if (command == null) {
-            return;
+            return "";
         }
 
         for(Command com : comList) {
             if (com.getName().equals(command)) {
                 success = true;
                 if (!com.matchesArgs(args)) {
-                    System.out.println("Ошибка при вводе аргументов команды " + com.getName() + ".");
+                    result = result.concat("Ошибка при вводе аргументов команды " + com.getName() + ".");
                     break;
                 } else {
-                    com.execute(args);
+                    result = result.concat(com.execute(args));
                 }
                 break;
             }
@@ -90,8 +92,9 @@ public class ConsoleReader {
         if (success) {
             history.capture(line);
         } else {
-            System.out.println("Неизвестная команда: " + command);
+            return "Неизвестная команда: " + command;
         }
+        return  result;
     }
 
     /**
@@ -99,8 +102,8 @@ public class ConsoleReader {
      * @throws IOException исключение ввода-вывода
      * @throws XMLStreamException исключение для неожиданных ошибок обработки
      */
-    public void readCommand() throws IOException, XMLStreamException {
-        executeCommand(scanner.nextLine());
+    public String readCommand() throws IOException, XMLStreamException {
+        return executeCommand(scanner.nextLine());
     }
 
     /**
@@ -248,11 +251,11 @@ public class ConsoleReader {
      * @param scanner используемый сканнер
      * @return возвращает целое число типа Long
      */
-    public static Long readLongValue(Scanner scanner){
+    public static Long readLongValue(Scanner scanner, String description){
         String line;
         Long value = null;
         while (true) {
-            System.out.print("Введите целое число, [-9223372036854775808...9223372036854775807L]: ");
+            System.out.print("Введите " + description + " (целое число, [-9223372036854775808...9223372036854775807L]): ");
             line = scanner.nextLine();
 
             try {

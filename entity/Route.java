@@ -30,6 +30,16 @@ public class Route implements Comparable<Route>{
         this.distance = distance;
     }
 
+    public Route (String name, Coordinates coordinates, Location to, Integer distance) {
+        this.creationDate = LocalDateTime.now();
+        this.id = hashCode();
+        this.name = name;
+        this.coordinates = coordinates;
+        this.from = null;
+        this.to = to;
+        this.distance = distance;
+    }
+
     /**
      * Конструктор, в котором все поля заполняются пользователем
      * @param id id
@@ -51,6 +61,28 @@ public class Route implements Comparable<Route>{
         this.name = name;
         this.coordinates = coordinates;
         this.from = from;
+        this.to = to;
+        this.distance = distance;
+    }
+
+
+    public Route (long id, String name, Coordinates coordinates, Location from, Location to, Integer distance) {
+        this.creationDate = LocalDateTime.now();
+        this.id = id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.from = from;
+        this.to = to;
+        this.distance = distance;
+    }
+
+
+    public Route (long id, String name, Coordinates coordinates, Location to, Integer distance) {
+        this.creationDate = LocalDateTime.now();
+        this.id = id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.from = null;
         this.to = to;
         this.distance = distance;
     }

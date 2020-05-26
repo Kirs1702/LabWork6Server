@@ -6,6 +6,7 @@ import main.entity.Route;
 import main.entity.RouteSet;
 
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UpdateCommand extends Command {
 
@@ -15,29 +16,27 @@ public class UpdateCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
-        Scanner scanner = new Scanner(System.in);
-        boolean success = false;
-        for (Route route : routeSet) {
+    public String execute(String... args) {
+
+        AtomicReference<String> result = new AtomicReference<>("");
+
+        routeSet.forEach(route -> {
             if (route.getId() == Long.parseLong(args[0])) {
 
+                ConsoleReader.readRouteValues(new Scanner(System.in), route);
+                result.set("Значения успешно обновлены.");
 
-                System.out.println("Обновление значений маршрута \"" + route.getName() + "\":");
-                ConsoleReader.readRouteValues(scanner, route);
-                System.out.println("Значения успешно обновлены.");
-
-
-                success = true;
-                break;
             }
-        }
-        if (!success) {
-            System.out.println("Маршрута с данным id отсутствует в коллекции.");
-        }
+        });
+
+        result.set("Маршрут с данным id отсутствует в коллекции.");
+
+        return result.get();
+
     }
 
     @Override
     public String getDescription() {
-        return "Обновить значение элемента коллекции, id которого равен заданному.";
+        return "Обновить значение элемента коллекции по id.";
     }
 }

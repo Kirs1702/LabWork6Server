@@ -97,7 +97,7 @@ public class RouteSetXmlParser {
     public static void RouteSetToXml(RouteSet routeSet, String pathXml) throws XMLStreamException, FileNotFoundException {
         XMLOutputFactory output = XMLOutputFactory.newInstance();
         XMLStreamWriter writer = null;
-        File xmlFile = new File(pathXml);
+        File xmlFile = new File(pathXml);               // do try catch
 
         if (xmlFile.exists() && !(new File(pathXml).canWrite())) {
             System.out.println("Файл " + pathXml + " недоступен к записи.");

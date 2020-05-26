@@ -4,6 +4,8 @@ import main.commands.Command;
 import main.entity.Route;
 import main.entity.RouteSet;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class ShowCommand extends Command {
 
 
@@ -12,16 +14,18 @@ public class ShowCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
+    public String execute(String... args) {
+
+
+        AtomicReference<String> result = new AtomicReference<>("");
         if (routeSet.size() == 0){
-            System.out.println("Коллекция пуста.");
+            return "Коллекция пуста.";
         }
         else {
-            System.out.println("Список элементов коллекции:");
-            for (Route route : routeSet) {
-                System.out.println(route.toString());
-            }
+            result.set(result + "Список элементов коллекции:\n");
+            routeSet.forEach(route -> result.set(result + route.toString() + "\n"));
         }
+        return  result.get();
    }
     @Override
     public String getDescription() {

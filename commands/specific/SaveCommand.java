@@ -15,8 +15,9 @@ public class SaveCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) throws IOException, XMLStreamException {
+    public String execute(String... args) throws IOException, XMLStreamException {
         RouteSetXmlParser.RouteSetToXml(routeSet, filePath);
+        return "";
     }
 
     @Override

@@ -13,17 +13,20 @@ public class FilterContainsNameCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
+    public String  execute(String... args) {
+        String result = "";
         boolean success = false;
         for (Route route : routeSet) {
             if (route.getName().contains(args[0])) {
-                System.out.println(route.toString());
+                result = result.concat(route.toString());
+                result = result.concat("\n");
                 success = true;
             }
         }
         if (!success) {
-            System.out.println("Маршрут с данным полем name отсутствует в коллекции.");
+            return "Маршрут с данным полем name отсутствует в коллекции.";
         }
+        return result;
     }
 
     @Override

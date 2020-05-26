@@ -3,6 +3,8 @@ package main.commands.specific;
 import main.commands.Command;
 import main.entity.RouteSet;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class InfoCommand extends Command {
 
     public InfoCommand(RouteSet routeSet, String name) {
@@ -10,9 +12,12 @@ public class InfoCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
-        System.out.println("информация о коллекции:");
-        System.out.println(routeSet.toString());
+    public String  execute(String... args) {
+        String result = "";
+        result = result.concat("Информация о коллекции:\n");
+        result = result.concat(routeSet.toString());
+
+        return result;
     }
 
     @Override

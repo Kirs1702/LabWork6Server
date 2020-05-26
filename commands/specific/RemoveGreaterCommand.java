@@ -10,18 +10,31 @@ import java.util.Scanner;
 
 public class RemoveGreaterCommand extends Command {
 
+    private Long id;
+
     public RemoveGreaterCommand(RouteSet routeSet, String name) {
         super(routeSet, name);
+        id = null;
+    }
+
+    public RemoveGreaterCommand(RouteSet routeSet, String name, Long id) {
+        super(routeSet, name);
+        this.id  = id;
     }
 
     @Override
-    public void execute(String... args) {
-        Scanner scanner = new Scanner(System.in);
+    public String execute(String... args) {
+
+        String result = "";
+
         boolean success = false;
         Route route = new Route();
-        System.out.println("Удаление элементов, id которых больше заданного:");
-        System.out.println("Введите id элемента:");
-        route.setId(ConsoleReader.readLongValue(scanner));
+        if (id == null) {
+            route.setId(ConsoleReader.readLongValue(new Scanner(System.in), "id"));
+        }
+        else {
+            route.setId(id);
+        }
 
 
 
@@ -35,11 +48,12 @@ public class RemoveGreaterCommand extends Command {
 
         for (Route routes : toDelete) {
             routeSet.remove(routes);
-            System.out.println("Удалён маршрут с именем \"" + routes.getName() + "\"");
+            result = result.concat("Удалён маршрут с именем \"" + routes.getName() + "\"\n");
         }
         if (!success) {
-            System.out.println("Ни один маршрут не был удалён.");
+            return "Ни один маршрут не был удалён.";
         }
+        return result;
 
     }
 

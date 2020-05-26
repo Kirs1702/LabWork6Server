@@ -4,6 +4,8 @@ import main.commands.Command;
 import main.commands.CommandList;
 import main.entity.RouteSet;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class HelpCommand extends Command {
 
     CommandList comList;
@@ -13,13 +15,12 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
-        System.out.println("Команда и аргументы вводятся через пробел, первое слово - команда, последующие - аргументы;" + "\n" +
-                "Каждая команда принимает свой набор ангументов. В случае несоответствия набора аргументов команда выполнена не будет.");
-        System.out.println("Список доступных команд:");
-        for(Command com : comList) {
-            System.out.println(com.getName() + " - " + com.getDescription());
-        }
+    public String execute(String... args) {
+        AtomicReference<String> ans = new AtomicReference<>("");
+        ans.set(ans + "Команда и аргументы вводятся через пробел, первое слово - команда, последующие - аргументы;\n" +
+                "Каждая команда принимает свой набор ангументов. В случае несоответствия набора аргументов команда выполнена не будет.\nСписок доступных команд:\n");
+        comList.forEach(com -> ans.set(ans + com.getName() + " - " + com.getDescription() + "\n"));
+        return  ans.get();
     }
 
     @Override

@@ -12,8 +12,9 @@ public class HistoryCommand extends Command {
     }
 
     @Override
-    public void execute(String... args) {
+    public String  execute(String... args) {
         reader.showHistory();
+        return "";
     }
 
     @Override
