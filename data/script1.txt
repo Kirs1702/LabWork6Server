@@ -1,3 +1,0 @@
-firstScriptStart
-execute_script src/main/data/script2.txt
-firstScriptEnd
