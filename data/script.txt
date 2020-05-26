@@ -1,0 +1,4 @@
+zerothScriptStart
+execute_script src/main/data/script1.txt
+info
+zerothScriptEnd

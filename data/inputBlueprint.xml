@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<routeSet>
+    <route id="111" name="Route10" distance="10000">
+        <coordinates x="10" y="10"/>
+        <creationDate year="2001" month="1" day="1" hours="1" minutes="1" seconds="1"/>
+        <locationFrom name="Start01" x="100" y="100"/>
+        <locationTo name="Finish01" x="1000" y="1000"/>
+    </route>
+    <route id="222" name="Route20" distance="20000">
+        <coordinates x="20" y="20"/>
+        <creationDate year="2002" month="2" day="2" hours="2" minutes="2" seconds="2"/>
+        <locationFrom name="Start02" x="200" y="200"/>
+        <locationTo name="Finish02" x="2000" y="2000"/>
+    </route>
+    <route id="333" name="Route30" distance="30000">
+        <coordinates x="30" y="30"/>
+        <creationDate year="2003" month="3" day="3" hours="3" minutes="3" seconds="3"/>
+        <locationFrom name="Start03" x="300" y="300"/>
+        <locationTo name="Finish03" x="3000" y="3000"/>
+    </route>
+</routeSet>

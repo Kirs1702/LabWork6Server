@@ -1,0 +1,3 @@
+secondScriptStart
+execute_script src/main/data/script.txt
+secondScriptEnd

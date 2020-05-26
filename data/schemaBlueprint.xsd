@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:simpleType name="intForDist">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nameOfLocation">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="367"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="intForCoords">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="-862"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+
+    <xsd:simpleType name="year">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="1900"/>
+            <xsd:maxInclusive value="2200"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="month">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="12"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="day">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="31"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="hour">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="23"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="minute">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="59"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="second">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="59"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="routeSet">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="route" minOccurs="1" maxOccurs="unbounded" >
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="coordinates" minOccurs="1" maxOccurs="1">
+                                <xsd:complexType>
+                                    <xsd:attribute name="x" type="xsd:float" use="required"/>
+                                    <xsd:attribute name="y" type="intForCoords" use="required"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="creationDate" minOccurs="1" maxOccurs="1">
+                                <xsd:complexType>
+                                    <xsd:attribute name="year" type="year" use="required"/>
+                                    <xsd:attribute name="month" type="month" use="required"/>
+                                    <xsd:attribute name="day" type="day" use="required"/>
+                                    <xsd:attribute name="hours" type="hour" use="required"/>
+                                    <xsd:attribute name="minutes" type="minute" use="required"/>
+                                    <xsd:attribute name="seconds" type="second" use="required"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="locationFrom" minOccurs="0" maxOccurs="1">
+                                <xsd:complexType>
+                                    <xsd:attribute name="name" type="nameOfLocation" use="optional"/>
+                                    <xsd:attribute name="x" type="xsd:int" use="required"/>
+                                    <xsd:attribute name="y" type="xsd:int" use="required"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="locationTo" minOccurs="1" maxOccurs="1">
+                                <xsd:complexType>
+                                    <xsd:attribute name="name" type="nameOfLocation" use="optional"/>
+                                    <xsd:attribute name="x" type="xsd:int" use="required"/>
+                                    <xsd:attribute name="y" type="xsd:int" use="required"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                        <xsd:attribute name="id" type="xsd:long" use="required"/>
+                        <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        <xsd:attribute name="distance" type="intForDist"  use="required"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
