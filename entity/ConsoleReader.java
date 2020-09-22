@@ -64,7 +64,7 @@ public class ConsoleReader {
      * @throws IOException исключение ввода-вывода
      * @throws XMLStreamException исключение для неожиданных ошибок обработки
      */
-    public String executeCommand(String line) throws IOException, XMLStreamException {
+    public String executeCommand(String user, String line) throws IOException, XMLStreamException {
         String result = "";
         boolean success = false;
         String[] args = prepareArgs(line);
@@ -82,7 +82,7 @@ public class ConsoleReader {
                     result = result.concat("Ошибка при вводе аргументов команды " + com.getName() + ".");
                     break;
                 } else {
-                    result = result.concat(com.execute(args));
+                    result = result.concat(com.execute(user, args));
                 }
                 break;
             }
@@ -102,8 +102,8 @@ public class ConsoleReader {
      * @throws IOException исключение ввода-вывода
      * @throws XMLStreamException исключение для неожиданных ошибок обработки
      */
-    public String readCommand() throws IOException, XMLStreamException {
-        return executeCommand(scanner.nextLine());
+    public String readCommand(String user) throws IOException, XMLStreamException {
+        return executeCommand(user, scanner.nextLine());
     }
 
     /**
@@ -251,11 +251,12 @@ public class ConsoleReader {
      * @param scanner используемый сканнер
      * @return возвращает целое число типа Long
      */
-    public static Long readLongValue(Scanner scanner, String description){
+    public static Long readLongPositiveValue(Scanner scanner, String description){
         String line;
         Long value = null;
+
         while (true) {
-            System.out.print("Введите " + description + " (целое число, [-9223372036854775808...9223372036854775807L]): ");
+            System.out.print("Введите " + description + " (целое число, [1...9223372036854775807L]): ");
             line = scanner.nextLine();
 
             try {
@@ -263,9 +264,10 @@ public class ConsoleReader {
             }
             catch (NumberFormatException ignored) {}
 
-            if (value != null) {
+            if (value != null && value > 0) {
                 return  value;
             }
+
             System.out.println("Введено неверное значение.");
             value = null;
         }

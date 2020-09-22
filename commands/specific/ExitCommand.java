@@ -8,14 +8,14 @@ import java.io.IOException;
 
 public class ExitCommand extends Command {
     String filePath;
-    public ExitCommand(String filePath, RouteSet routeSet, String name) {
+    public ExitCommand(RouteSet routeSet, String name) {
         super(routeSet, name);
         this.filePath = filePath;
     }
 
     @Override
-    public String execute(String... args) throws IOException, XMLStreamException {
-        new SaveCommand(filePath, routeSet, "").execute();
+    public String execute(String user, String... args) throws IOException, XMLStreamException {
+        new SaveCommand(filePath, routeSet, "").execute(user);
         System.out.println("Работа завершена.");
         System.exit(0);
         return  null;

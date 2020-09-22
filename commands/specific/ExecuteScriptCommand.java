@@ -18,7 +18,7 @@ public class ExecuteScriptCommand extends Command {
     }
 
     @Override
-    public String  execute(String... args) throws IOException, XMLStreamException {
+    public String  execute(String user, String... args) throws IOException, XMLStreamException {
         Scanner fileScan;
         try {
             fileScan = new Scanner(new InputStreamReader(new FileInputStream(new File(args[0]))));
@@ -39,14 +39,14 @@ public class ExecuteScriptCommand extends Command {
                 String line = consoleReader.getScanner().nextLine();
                 if (consoleReader.prepareCommand(line).equals("execute_script")) {
                     if (consoleReader.getScriptHistory().put(consoleReader.prepareArgs(line)[0])) {
-                        consoleReader.executeCommand(line);
+                        consoleReader.executeCommand(user, line);
                         consoleReader.getScriptHistory().pop();
                     } else {
                         System.out.println("Скрипт " + consoleReader.prepareArgs(line)[0] + " не выполняется, так как он приведёт к бесконечной рекурсии.");
                     }
                 }
                 else {
-                    consoleReader.executeCommand(line);
+                    consoleReader.executeCommand(user, line);
                 }
 
             } else {

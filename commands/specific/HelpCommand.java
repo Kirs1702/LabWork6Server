@@ -15,7 +15,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public String execute(String... args) {
+    public String execute(String user, String... args) {
         AtomicReference<String> ans = new AtomicReference<>("");
         ans.set(ans + "Команда и аргументы вводятся через пробел, первое слово - команда, последующие - аргументы;\n" +
                 "Каждая команда принимает свой набор ангументов. В случае несоответствия набора аргументов команда выполнена не будет.\nСписок доступных команд:\n");

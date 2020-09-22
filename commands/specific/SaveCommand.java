@@ -2,10 +2,7 @@ package main.commands.specific;
 
 import main.commands.Command;
 import main.entity.RouteSet;
-import main.entity.RouteSetXmlParser;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
 
 public class SaveCommand extends Command {
     String filePath;
@@ -15,8 +12,8 @@ public class SaveCommand extends Command {
     }
 
     @Override
-    public String execute(String... args) throws IOException, XMLStreamException {
-        RouteSetXmlParser.RouteSetToXml(routeSet, filePath);
+    public String execute(String user, String... args){
+
         return "";
     }
 

@@ -14,7 +14,7 @@ public class ShowCommand extends Command {
     }
 
     @Override
-    public String execute(String... args) {
+    public String execute(String user, String... args) {
 
 
         AtomicReference<String> result = new AtomicReference<>("");
@@ -23,7 +23,7 @@ public class ShowCommand extends Command {
         }
         else {
             result.set(result + "Список элементов коллекции:\n");
-            routeSet.forEach(route -> result.set(result + route.toString() + "\n"));
+            routeSet.getSet().forEach(route -> result.set(result + route.toString() + "\n"));
         }
         return  result.get();
    }

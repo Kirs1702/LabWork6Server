@@ -13,10 +13,10 @@ public class FilterContainsNameCommand extends Command {
     }
 
     @Override
-    public String  execute(String... args) {
+    public String  execute(String user, String... args) {
         String result = "";
         boolean success = false;
-        for (Route route : routeSet) {
+        for (Route route : routeSet.getSet()) {
             if (route.getName().contains(args[0])) {
                 result = result.concat(route.toString());
                 result = result.concat("\n");

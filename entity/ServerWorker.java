@@ -16,7 +16,7 @@ public class ServerWorker  implements Runnable {
     public void run() {
         while (true) {
             try {
-                System.out.println(reader.readCommand());
+                System.out.println(reader.readCommand("master"));
             } catch (NoSuchElementException | IOException | XMLStreamException e) {
                 System.out.println("Работа завершена.");
                 System.exit(0);

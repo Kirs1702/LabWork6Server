@@ -12,7 +12,7 @@ public class HistoryCommand extends Command {
     }
 
     @Override
-    public String  execute(String... args) {
+    public String  execute(String user, String... args) {
         reader.showHistory();
         return "";
     }

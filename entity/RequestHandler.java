@@ -5,66 +5,29 @@ import main.commands.CommandList;
 import main.commands.specific.*;
 import main.request.*;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
-
 public class RequestHandler {
 
 
 
 
-    public static String handleRequest(Request request, RouteSet routeSet, CommandList comList, ConsoleReader conReader) throws IOException, XMLStreamException {
+    public static String handleRequest(String user, DataBaseHandler dbh, Request request, RouteSet routeSet, CommandList comList) {
 
 
         switch (request.getName()) {
 
             case "add_if_min" : {
                 AddIfMinReq newReq = (AddIfMinReq) request;
-                Route route;
-
-                if (!newReq.isNoAddFrom()){
-                    route = new Route(newReq.getNewId(), newReq.getRouteName(), new Coordinates(newReq.getCordX(), newReq.getCordY()),
-                            new Location(newReq.getFromX(), newReq.getFromY(), newReq.getFromName()), new Location(newReq.getToX(),newReq.getToY(), newReq.getToName()), newReq.getDistance());
-                } else  {
-                    route = new Route(newReq.getNewId(), newReq.getRouteName(), new Coordinates(newReq.getCordX(), newReq.getCordY()),
-                             new Location(newReq.getToX(),newReq.getToY(), newReq.getToName()), newReq.getDistance());
-                }
-                for(Route routes : routeSet) {
-                    if (route.compareTo(routes) == 0) {
-                        return  "Новый маршрут не был добавлен.";
-                    }
-                }
-
-                for(Route routes : routeSet) {
-                    if (route.compareTo(routes) >= 0) {
-                        return  "Новый маршрут не был добавлен.";
-                    }
-                }
-                routeSet.add(route);
-                return  "Новый маршрут успешно добавлен.";
-
+                return  new AddIfMinCommand(routeSet, "", dbh).execute(user, newReq);
             }
 
             case "add" : {
                 AddReq newReq = (AddReq) request;
-                Route route;
-
-                if (!newReq.isNoAddFrom()){
-                    route = new Route(newReq.getRouteName(), new Coordinates(newReq.getCordX(), newReq.getCordY()),
-                            new Location(newReq.getFromX(), newReq.getFromY(), newReq.getFromName()), new Location(newReq.getToX(),newReq.getToY(), newReq.getToName()), newReq.getDistance());
-                } else  {
-                    route = new Route(newReq.getRouteName(), new Coordinates(newReq.getCordX(), newReq.getCordY()),
-                            new Location(newReq.getToX(),newReq.getToY(), newReq.getToName()), newReq.getDistance());
-                }
-
-                routeSet.add(route);
-                return  "Новый маршрут успешно добавлен.";
+                return  new AddCommand(routeSet, "", dbh).execute(user, newReq);
             }
 
-            case "clear" : {
-                routeSet.clear();
-                return "Коллекция очищена.";
-            }
+            /*case "clear" : {
+                return new ClearCommand(routeSet, "").execute(user);
+            }*/
 
             case "filter_contains_name" : {
                 FilterContainsNameReq newReq = (FilterContainsNameReq) request;
@@ -72,57 +35,39 @@ public class RequestHandler {
             }
 
             case "help" : {
-                return new HelpCommand(comList, routeSet, "").execute();
+                return new HelpCommand(comList, routeSet, "").execute(user);
             }
 
             case "info" : {
-                return new InfoCommand(routeSet, "").execute();
+                return new InfoCommand(routeSet, "").execute(user);
             }
 
             case "print_ascending" : {
-                return new PrintAscendingCommand(routeSet, "").execute();
+                return new PrintAscendingCommand(routeSet, "").execute(user);
             }
 
             case "remove_all_by_distance" : {
                 RemoveAllByDistanceReq newReq = (RemoveAllByDistanceReq) request;
-                return new RemoveAllByDistanceCommand(routeSet, "").execute(Integer.toString(newReq.getDistance()));
+                return new RemoveAllByDistanceCommand(routeSet, "", dbh).execute(user, Integer.toString(newReq.getDistance()));
             }
 
             case "remove_by_id" : {
                 RemoveByIdReq newReq = (RemoveByIdReq) request;
-                return new RemoveByIdCommand(routeSet, "").execute(Long.toString(newReq.getId()));
+                return new RemoveByIdCommand(routeSet, "", dbh).execute(user, Long.toString(newReq.getId()));
             }
 
             case "remove_greater" : {
                 RemoveGreaterReq newReq = (RemoveGreaterReq) request;
-                return new RemoveGreaterCommand(routeSet, "", newReq.getId()).execute();
+                return new RemoveGreaterCommand(routeSet, "", dbh, newReq.getId()).execute(user);
             }
 
             case "show" : {
-                return new ShowCommand(routeSet, "").execute();
+                return new ShowCommand(routeSet, "").execute(user);
             }
 
             case "update" : {
                 UpdateReq newReq = (UpdateReq) request;
-
-
-                for (Route route : routeSet) {
-                    if (route.getId() == newReq.getId()) {
-
-                        if (!newReq.isNoAddFrom()){
-                            route = new Route(newReq.getId(), newReq.getRouteName(), new Coordinates(newReq.getCordX(), newReq.getCordY()),
-                                    new Location(newReq.getFromX(), newReq.getFromY(), newReq.getFromName()), new Location(newReq.getToX(),newReq.getToY(), newReq.getToName()), newReq.getDistance());
-                        } else  {
-                            route = new Route(newReq.getId(), newReq.getRouteName(), new Coordinates(newReq.getCordX(), newReq.getCordY()),
-                                    new Location(newReq.getToX(),newReq.getToY(), newReq.getToName()), newReq.getDistance());
-                        }
-
-                        return "Значения успешно обновлены.";
-
-                    }
-                }
-
-                return "Маршрут с данным id отсутствует в коллекции.";
+                return new UpdateCommand(routeSet, "", dbh).execute(user, newReq);
             }
 
 

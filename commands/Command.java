@@ -69,7 +69,7 @@ public abstract class Command {
      * @throws IOException
      * @throws XMLStreamException
      */
-    public abstract String execute(String... args) throws IOException, XMLStreamException;
+    public abstract String execute(String user, String... args) throws IOException, XMLStreamException;
 
     public String getName() {
         return name;

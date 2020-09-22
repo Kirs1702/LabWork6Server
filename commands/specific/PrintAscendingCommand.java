@@ -13,7 +13,7 @@ public class PrintAscendingCommand extends Command {
     }
 
     @Override
-    public String execute(String... args) {
+    public String execute(String user, String... args) {
 
         String result = "";
 
@@ -26,7 +26,7 @@ public class PrintAscendingCommand extends Command {
         ArrayList<Route> toPrint = new ArrayList<>();
         routeMin.setId(9223372036854775807L);
 
-        for(Route route : routeSet){
+        for(Route route : routeSet.getSet()){
             if (route.compareTo(routeMin) < 0) {
                 routeMin = route;
             }
@@ -36,7 +36,7 @@ public class PrintAscendingCommand extends Command {
         for (int i = 1; i < routeSet.size(); i++){
             toPrint.add(new Route());
             toPrint.get(i).setId((9223372036854775807L));
-            for(Route route : routeSet){
+            for(Route route : routeSet.getSet()){
                 if (route.compareTo(toPrint.get(i)) < 0 && route.compareTo(toPrint.get(i-1)) > 0) {
                     toPrint.set(i, route);
                 }

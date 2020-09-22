@@ -2,6 +2,7 @@ package main.commands;
 
 
 import main.entity.ConsoleReader;
+import main.entity.DataBaseHandler;
 import main.entity.RouteSet;
 
 import java.lang.reflect.InvocationTargetException;
@@ -67,6 +68,9 @@ public class CommandList extends ArrayList<Command>{
         add(clazz.getConstructor(String.class, RouteSet.class, String.class).newInstance(pathXml, routeSet, name));
     }
 
+    public void initCommand(RouteSet routeSet, String name, DataBaseHandler dbh, Class<? extends Command> clazz) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        add(clazz.getConstructor(RouteSet.class, String.class, DataBaseHandler.class).newInstance(routeSet, name, dbh));
+    }
 
 
 }

@@ -10,6 +10,7 @@ public class Route implements Comparable<Route>{
     private Location from; //Поле может быть null
     private Location to; //Поле не может быть null
     private Integer distance; //Поле не может быть null, Значение поля должно быть больше 1
+    private String user;
 
 
     /**
@@ -22,7 +23,6 @@ public class Route implements Comparable<Route>{
      */
     public Route (String name, Coordinates coordinates, Location from, Location to, Integer distance) {
         this.creationDate = LocalDateTime.now();
-        this.id = hashCode();
         this.name = name;
         this.coordinates = coordinates;
         this.from = from;
@@ -32,7 +32,6 @@ public class Route implements Comparable<Route>{
 
     public Route (String name, Coordinates coordinates, Location to, Integer distance) {
         this.creationDate = LocalDateTime.now();
-        this.id = hashCode();
         this.name = name;
         this.coordinates = coordinates;
         this.from = null;
@@ -65,6 +64,16 @@ public class Route implements Comparable<Route>{
         this.distance = distance;
     }
 
+    public Route (long id, String name, Coordinates coordinates,  LocalDateTime creationDate, Location from, Location to, Integer distance) {
+        this.creationDate = creationDate;
+        this.id = id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.from = from;
+        this.to = to;
+        this.distance = distance;
+    }
+
 
     public Route (long id, String name, Coordinates coordinates, Location from, Location to, Integer distance) {
         this.creationDate = LocalDateTime.now();
@@ -87,12 +96,27 @@ public class Route implements Comparable<Route>{
         this.distance = distance;
     }
 
+
+    public void copyRoute(Route newRoute){
+        setId(newRoute.getId());
+        setName(newRoute.getName());
+        setCoordinates(newRoute.getCoordinates());
+        setCreationDate(newRoute.getCreationDate());
+        setFrom(newRoute.getFrom());
+        setTo(newRoute.getTo());
+        setDistance(newRoute.getDistance());
+        setUser(newRoute.getUser());
+
+    }
+
+
+
+
     /**
      * Конструктор, в котором автоматически заполняются поля id и creationDate
      */
     public Route () {
         this.creationDate = LocalDateTime.now();
-        this.id = hashCode();
     }
 
     public void setName(String name) {
@@ -119,8 +143,8 @@ public class Route implements Comparable<Route>{
         this.id = id;
     }
 
-    public void setCreationDate(int year, int month, int day, int hours, int minutes, int seconds) {
-        this.creationDate = LocalDateTime.of(year, month, day, hours, minutes, seconds);
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
     public long getId() {
@@ -151,6 +175,16 @@ public class Route implements Comparable<Route>{
         return to;
     }
 
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+
     /**
      * Метод для сравнения объектов типа Route по полю id
      * @param o объект для сравнения
@@ -166,7 +200,8 @@ public class Route implements Comparable<Route>{
     @Override
     public String toString() {
         return "Route{" +
-                "id=" + id +
+                "user=" + user +
+                ", id=" + id +
                 ", name='" + name + '\'' +
                 ", coordinates=" + coordinates +
                 ", creationDate=" + creationDate +

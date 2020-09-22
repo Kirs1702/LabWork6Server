@@ -12,7 +12,7 @@ public class InfoCommand extends Command {
     }
 
     @Override
-    public String  execute(String... args) {
+    public String  execute(String user, String... args) {
         String result = "";
         result = result.concat("Информация о коллекции:\n");
         result = result.concat(routeSet.toString());

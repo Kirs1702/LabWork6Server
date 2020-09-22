@@ -3,61 +3,77 @@ package main;
 import main.commands.CommandList;
 import main.commands.specific.*;
 import main.entity.*;
-import main.request.Request;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
+
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.Set;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 
 public class Main {
-    public static void main(String[] args) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException, SAXException, ParserConfigurationException, XMLStreamException, ClassNotFoundException {
+    public static void main(String[] args) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
 
-
-        System.out.println("Консольное приложение по управлению коллекцией маршрутов запущено.");
         RouteSet routeSet = new RouteSet();
+
+
+
+
+
+
         CommandList comList = new CommandList();
         Scanner scanner = new Scanner(System.in);
         ConsoleReader reader = new ConsoleReader(comList, scanner, 10);
+        DataBaseHandler dbh = null;
+
+        int port = 0;
+        try {
+
+            File configFile = new File(args[0]);
+            BufferedReader bReader = new BufferedReader(new FileReader(configFile));
+
+            port = Integer.parseInt(bReader.readLine());
+
+            //----------------------------
+
+            dbh = new DataBaseHandler("jdbc:postgresql://localhost:5432/RoutesInfo", "postgres", "pass1word");
+            routeSet = dbh.selectAllRoutes();
 
 
+            //----------------------------
 
-        File configFile = new File(args[0]);
-        BufferedReader bReader = new BufferedReader(new FileReader(configFile));
+            // Заполнение команд
+            fillCommands(routeSet, comList, reader, dbh);
 
-
-        String pathXml = bReader.readLine();
-        String pathXsd = bReader.readLine();
-        int port = Integer.parseInt(bReader.readLine());
-
-
-        // Заполнение команд
-        fillCommands(routeSet, comList, reader, pathXml);
-
-        // Попытка заполнения коллекции
-        if (pathXml != null && pathXsd != null) {
-            RouteSetXmlParser.XmlToRouteSet(pathXml, pathXsd, routeSet);
+        }
+        catch (ArrayIndexOutOfBoundsException ex) {
+            System.out.println("Требуется один аргумент коммандной строки!");
+            System.exit(0);
+        }
+        catch (FileNotFoundException ex) {
+            System.out.println("Файл не найден!");
+            System.exit(0);
+        }
+        catch (NumberFormatException ex){
+            System.out.println("В файле неверно указан порт!");
+            System.exit(0);
         }
 
-
-        System.out.println("Введите help для получения справки.");
-
-
-        // Запуск серверного рабочего
         Thread thread = new Thread(new ServerWorker(reader));
         thread.start();
+
+
+
+        System.out.println("Консольное приложение по управлению коллекцией маршрутов запущено.\nВведите help для получения справки.");
 
 
 
@@ -68,7 +84,10 @@ public class Main {
         serverSocket.bind(new InetSocketAddress("localhost", port));
         serverSocket.configureBlocking(false);
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-        ByteBuffer buffer = ByteBuffer.allocate(2048);
+
+
+        ForkJoinPool fjp = ForkJoinPool.commonPool();
+        ExecutorService ctp = Executors.newCachedThreadPool();
 
 
 
@@ -76,6 +95,7 @@ public class Main {
 
 
         while (true) {
+
             selector.select();
             Set<SelectionKey> selectedKeys = selector.selectedKeys();
             Iterator<SelectionKey> iter = selectedKeys.iterator();
@@ -84,50 +104,16 @@ public class Main {
                 SelectionKey key = iter.next();
 
                 if (key.isAcceptable()) {
+
+
+                    Selector newSelector = Selector.open();
                     SocketChannel client = serverSocket.accept();
                     client.configureBlocking(false);
-                    client.register(selector, SelectionKey.OP_READ);
-                    System.out.println("Подключен клиент: " + client.getRemoteAddress());
+                    client.register(newSelector, SelectionKey.OP_READ);
+
+                    new HandlerThread(client, newSelector, dbh, routeSet, comList, fjp, ctp).start();
                 }
 
-                if (key.isReadable()) {
-                    SocketChannel client = (SocketChannel) key.channel();
-                    ObjectInputStream ois;
-
-                    try {
-                        client.read(buffer);
-                        ois = new ObjectInputStream(new ByteArrayInputStream(buffer.array()));
-                    }
-                    catch (IOException ex) {
-
-                        System.out.println("Отключен клиент: " + client.getRemoteAddress());
-                        key.channel().close();
-                        selectedKeys.remove(key);
-                        client.close();
-                        continue;
-                    }
-
-
-
-                    buffer.flip();
-
-
-                    Object obj = ois.readObject();
-                    Request req = (Request) obj;
-
-                    buffer.clear();
-
-                    byte[] b = RequestHandler.handleRequest(req, routeSet, comList, reader).getBytes();
-                    ByteBuffer bb = ByteBuffer.wrap(b);
-
-                    buffer.clear();
-
-                    client.write(bb);
-
-                    ois.close();
-
-
-                }
                 iter.remove();
 
 
@@ -138,21 +124,21 @@ public class Main {
 
     }
 
-    private static void fillCommands(RouteSet routeSet, CommandList comList, ConsoleReader reader, String pathXml) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    private static void fillCommands(RouteSet routeSet, CommandList comList, ConsoleReader reader, DataBaseHandler dbh) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         comList.initCommand(comList, routeSet, "help", HelpCommand.class);
         comList.initCommand(routeSet, "info", InfoCommand.class);
         comList.initCommand(routeSet,"show", ShowCommand.class);
-        comList.initCommand(routeSet, "add", AddCommand.class);
-        comList.initCommand(routeSet, "update", UpdateCommand.class);
-        comList.initCommand(routeSet, "remove_by_id", RemoveByIdCommand.class);
-        comList.initCommand(routeSet, "clear", ClearCommand.class);
-        comList.initCommand(pathXml, routeSet, "save", SaveCommand.class);
+        comList.initCommand(routeSet, "add", dbh, AddCommand.class);
+        comList.initCommand(routeSet, "update", dbh, UpdateCommand.class);
+        comList.initCommand(routeSet, "remove_by_id", dbh, RemoveByIdCommand.class);
+        comList.initCommand(routeSet, "clear", dbh, ClearCommand.class);
+        //comList.initCommand(pathXml, routeSet, "save", SaveCommand.class);
         comList.initCommand(reader, routeSet, "execute_script", ExecuteScriptCommand.class);
-        comList.initCommand(pathXml, routeSet, "exit", ExitCommand.class);
-        comList.initCommand(routeSet, "add_if_min", AddIfMinCommand.class);
-        comList.initCommand(routeSet, "remove_greater", RemoveGreaterCommand.class);
+        comList.initCommand(routeSet, "exit", ExitCommand.class);
+        comList.initCommand(routeSet, "add_if_min", dbh, AddIfMinCommand.class);
+        comList.initCommand(routeSet, "remove_greater", dbh, RemoveGreaterCommand.class);
         comList.initCommand(reader, routeSet, "history", HistoryCommand.class);
-        comList.initCommand(routeSet, "remove_all_by_distance", RemoveAllByDistanceCommand.class);
+        comList.initCommand(routeSet, "remove_all_by_distance", dbh,  RemoveAllByDistanceCommand.class);
         comList.initCommand(routeSet, "filter_contains_name", FilterContainsNameCommand.class);
         comList.initCommand(routeSet, "print_ascending", PrintAscendingCommand.class);
     }
