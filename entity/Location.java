@@ -1,6 +1,8 @@
 package main.entity;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
     private String name; //Длина строки не должна быть больше 367, Поле может быть null
     private Integer x; //Поле не может быть null
     private Integer y; //Поле не может быть null

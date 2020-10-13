@@ -18,24 +18,32 @@ public class RemoveAllByDistanceCommand extends Command {
 
     @Override
     public String  execute(String user, String... args) {
+        String result = "";
         boolean success = false;
         if(routeSet.size() == 0){
             return "Коллекция пуста.";
         }
         else {
 
-            for (Route route : routeSet.getSet()) {
+            ArrayList<Route> toDelete = new ArrayList<>();
+            for(Route route : routeSet.getSet()) {
                 if (route.getDistance() == Integer.parseInt(args[0])) {
                     if (user.equals(route.getUser()) || user.equals("master")){
-                        dbh.deleteRouteById(route.getId());
-                        routeSet.remove(route);
-
-                        success = true;
+                        toDelete.add(route);
                     }
                 }
             }
+
+            for (Route route : toDelete) {
+                dbh.deleteRouteById(route.getId());
+                routeSet.remove(route);
+                result = result.concat("Удалён маршрут с именем \"" + route.getName() + "\"\n");
+                success = true;
+
+
+            }
         }
-        if (success) return "Были удалены некоторые элементы.";
+        if (success) return result;
         return  "Не был удалён ни один элемент";
     }
 

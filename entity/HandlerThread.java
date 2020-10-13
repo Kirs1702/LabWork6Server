@@ -14,8 +14,7 @@ import java.nio.channels.Selector;
 
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-;
-import java.util.concurrent.*;
+
 
 public class HandlerThread extends Thread {
     private final SocketChannel client;
@@ -23,17 +22,13 @@ public class HandlerThread extends Thread {
     private final DataBaseHandler dbh;
     private final RouteSet routeSet;
     private final CommandList comList;
-    private final ForkJoinPool fjp;
-    private final ExecutorService ctp;
 
-    public HandlerThread(SocketChannel client, Selector selector, DataBaseHandler dbh, RouteSet routeSet, CommandList comList, ForkJoinPool fjp, ExecutorService ctp) {
+    public HandlerThread(SocketChannel client, Selector selector, DataBaseHandler dbh, RouteSet routeSet, CommandList comList) {
         this.client = client;
         this.selector = selector;
         this.dbh = dbh;
         this.routeSet = routeSet;
         this.comList = comList;
-        this.fjp = fjp;
-        this.ctp = ctp;
     }
 
     public void run() {
@@ -41,13 +36,14 @@ public class HandlerThread extends Thread {
             System.out.println("Подключен клиент " + client.getRemoteAddress());
             ByteBuffer buffer = ByteBuffer.allocate(2048);
 
-            client.configureBlocking(false);
+            //client.configureBlocking(false);
             client.register(selector, SelectionKey.OP_READ);
             String username;
 
 
             finish:
             {
+                //регистрация
             outerLoop:
             while (true) {
                 selector.select();
@@ -127,6 +123,7 @@ public class HandlerThread extends Thread {
 
             buffer.clear();
 
+            //выполнение команд
             outerLoop:
             while (true) {
                 selector.select();
@@ -147,29 +144,13 @@ public class HandlerThread extends Thread {
                         Request req = (Request) obj;
                         buffer.clear();
 
+                        byte[] b = RequestHandler.handleRequest(username, dbh, req, routeSet, comList);
 
-                        Callable<ByteBuffer> c = () -> {
-                            byte[] b = RequestHandler.handleRequest(username, dbh, req, routeSet, comList).getBytes();
-                            return ByteBuffer.wrap(b);
-                        };
-
-                        ForkJoinTask<ByteBuffer> task = ForkJoinTask.adapt(c);
-                        ByteBuffer bb = fjp.invoke(task);
+                        ByteBuffer bb = ByteBuffer.wrap(b);
 
                         buffer.clear();
 
-
-
-                        Runnable r = () -> {
-                            try {
-                                client.write(bb);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        };
-
-                        Future future = ctp.submit(r);
-                        while (!future.isDone());
+                        client.write(bb);
 
 
                         ois.close();

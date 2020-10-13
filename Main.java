@@ -15,21 +15,12 @@ import java.nio.channels.SocketChannel;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 
 
 public class Main {
     public static void main(String[] args) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
 
         RouteSet routeSet = new RouteSet();
-
-
-
-
-
-
         CommandList comList = new CommandList();
         Scanner scanner = new Scanner(System.in);
         ConsoleReader reader = new ConsoleReader(comList, scanner, 10);
@@ -38,18 +29,13 @@ public class Main {
         int port = 0;
         try {
 
-            File configFile = new File(args[0]);
-            BufferedReader bReader = new BufferedReader(new FileReader(configFile));
+            port = Integer.parseInt(args[0]);
 
-            port = Integer.parseInt(bReader.readLine());
-
-            //----------------------------
 
             dbh = new DataBaseHandler("jdbc:postgresql://localhost:5432/RoutesInfo", "postgres", "pass1word");
             routeSet = dbh.selectAllRoutes();
 
 
-            //----------------------------
 
             // Заполнение команд
             fillCommands(routeSet, comList, reader, dbh);
@@ -59,12 +45,9 @@ public class Main {
             System.out.println("Требуется один аргумент коммандной строки!");
             System.exit(0);
         }
-        catch (FileNotFoundException ex) {
-            System.out.println("Файл не найден!");
-            System.exit(0);
-        }
+
         catch (NumberFormatException ex){
-            System.out.println("В файле неверно указан порт!");
+            System.out.println("Неверно указан порт!");
             System.exit(0);
         }
 
@@ -73,7 +56,7 @@ public class Main {
 
 
 
-        System.out.println("Консольное приложение по управлению коллекцией маршрутов запущено.\nВведите help для получения справки.");
+        System.out.println("приложение по управлению коллекцией маршрутов запущено.\nВведите help для получения справки.");
 
 
 
@@ -85,9 +68,6 @@ public class Main {
         serverSocket.configureBlocking(false);
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
-
-        ForkJoinPool fjp = ForkJoinPool.commonPool();
-        ExecutorService ctp = Executors.newCachedThreadPool();
 
 
 
@@ -111,7 +91,7 @@ public class Main {
                     client.configureBlocking(false);
                     client.register(newSelector, SelectionKey.OP_READ);
 
-                    new HandlerThread(client, newSelector, dbh, routeSet, comList, fjp, ctp).start();
+                    new HandlerThread(client, newSelector, dbh, routeSet, comList).start();
                 }
 
                 iter.remove();

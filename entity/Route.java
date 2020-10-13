@@ -1,8 +1,9 @@
 package main.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Route implements Comparable<Route>{
+public class Route implements Comparable<Route>, Serializable {
     private long id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
@@ -200,7 +201,7 @@ public class Route implements Comparable<Route>{
     @Override
     public String toString() {
         return "Route{" +
-                "user=" + user +
+                "user='" + user + '\'' +
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", coordinates=" + coordinates +

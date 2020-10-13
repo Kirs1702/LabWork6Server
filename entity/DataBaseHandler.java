@@ -37,10 +37,13 @@ public class DataBaseHandler {
                 Route route = new Route(rs.getLong("id"), rs.getString("name"),
                         new Coordinates(rs.getFloat("coordinatesx"), rs.getInt("coordinatesy")),
                         LocalDateTime.parse(rs.getString("datetime"), DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
-                        new Location(rs.getInt("locationfromx"), rs.getInt("locationfromy"), rs.getString("locationfromname")),
+                        null,
                         new Location(rs.getInt("locationtox"), rs.getInt("locationtoy"), rs.getString("locationtoname")),
                         rs.getInt("distance"));
                 route.setUser(rs.getString("username"));
+                if (rs.getString("locationfromname") != null) {
+                    route.setFrom(new Location(rs.getInt("locationfromx"), rs.getInt("locationfromy"), rs.getString("locationfromname")));
+                }
                 routeSet.add(route);
 
             }

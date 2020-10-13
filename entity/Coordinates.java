@@ -1,6 +1,8 @@
 package main.entity;
 
-public class Coordinates {
+import java.io.Serializable;
+
+public class Coordinates implements Serializable {
     private Float x; //Поле не может быть null
     private Integer y; //Значение поля должно быть больше -863, Поле не может быть null
 
